@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+        <title>Battleground Bravery</title>
+        
+<!-- Start: injected by Adguard -->
+<script src="//local.adguard.com/adguard-ajax-api/injections/content-script.js?ts=63681365846749&amp;domain=battleground-bravery.com&amp;mask=111" nonce="d88745705b6842799c326c9446ce7a77" type="text/javascript"></script>
+<script src="//local.adguard.com/adguard-ajax-api/injections/userscripts.js?ts=63681260652521&name=AdGuard%20Popup%20Blocker&name=Adguard%20Assistant" nonce="d88745705b6842799c326c9446ce7a77" type="text/javascript"></script>
+
+<!-- End: injected by Adguard -->
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="stylesheet" href="css/uikit.min.css" />
+        <script src="js/uikit.min.js"></script>
+        <script src="js/uikit-icons.min.js"></script>
+        <script src="js/linq.min.js"></script>
+        <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+        </style>
+    </head>
+    <body style="background-image: url('assets/background.png'); background-size: auto 150%; background-repeat: no-repeat; background-position: 50% 50%;">
+        <nav class="uk-navbar-container" style="margin-bottom: 10px;" uk-navbar>
+            <div class="uk-navbar-left">
+                <ul class="uk-navbar-nav">
+                    <li class="uk-active">
+                        <a href="index.html">
+                            <span class="uk-icon uk-margin-small-right" uk-icon="icon: home"></span>
+                            Home
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="uk-navbar-center">
+                <ul class="uk-navbar-nav">
+                    <li><a href="index.html"><img src="assets/logo.png" /></a></li>
+                </ul>
+            </div>
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    <li>
+                        <a href="about.html">
+                            About
+                            <span class="uk-icon uk-margin-small-left" uk-icon="icon: question"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <button id="btnReroll" 
+            class="uk-button uk-button-default uk-align-center" 
+            style="background-color: #ffffff; display: none; margin-top: 0px; margin-bottom: 10px;"
+            onclick="reroll();">Reroll!</button>
+        <div id="imagetable" class="uk-flex uk-flex-center">
+            <div class="uk-card uk-card-default uk-card-body" onclick="mapSelectErangel();" id="mapDivErangel">
+                <h3 class="uk-card-title">Erangel</h3>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-left" onclick="mapSelectMiramar();" id="mapDivMiramar">
+                    <h3 class="uk-card-title">Miramar</h3>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-left" onclick="mapSelectVikendi();" id="mapDivVikendi">
+                    <h3 class="uk-card-title">Vikendi</h3>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-left" onclick="mapSelectSanhok();" id="mapDivSanhok">
+                    <h3 class="uk-card-title">Sanhok</h3>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body  uk-margin-left" id="bonusRulesDiv" style="height: auto; display: none;">
+                <h3 class="uk-card-title">Bonus Rule: <span id="bonusRuleName"></span></h3>
+                <span id="bonusRuleText"></span>
+            </div>
+        </div>
+        <div class="uk-section uk-section-muted uk-align-center" style="width: 66%; padding-top: 20px; padding-bottom: 30px;" id="settingsContainer">
+            <div class="uk-container">
+                <h3>Settings</h3>
+                <div class="uk-column-1-2">
+                    <p>
+                        <span uk-tooltip="You roll all weapons at random."><label><input id="rbNormalMode" class="uk-radio" type="radio" name="radio1" checked> Normal Mode</label></span><br />
+                        <span uk-tooltip="All weapons rolled have the same ammo type.&lt;br /&gt; At the moment only weapons with 9mm, .45 ACP and 12 Gauge are available for all slots. Because of this mostly SMGs are rolled."><label><input id="rbSingleAmmoMode" class="uk-radio" type="radio" name="radio1"> Single Ammo Mode</label></span><br />
+                        <!--<span uk-tooltip="The weapons you roll share a firemode"><label><input id="rbFiremodeMode" class="uk-radio" type="radio" name="radio1"> Firemode Mode</label></span><br />-->
+                        <span></span><br />
+                        <span></span><br />
+                        <span></span>
+                    </p>
+                    <p>
+                        <span uk-tooltip="You can roll carepackage only weapons. Be careful, that could take up to two weapon slots!"><input id="cbHardrollCarepackages" class="uk-checkbox" type="checkbox">  Hardroll Carepackages</span><br />
+                        <span uk-tooltip="You will only roll weapons of the specified wepontype for the primary and secondary weapon slot. May make the hardrolled carepackage drops useless."><input id="cbSpecificWeapontype" class="uk-checkbox" type="checkbox">  Specific weapon type</span><br />
+                        <select id="weaponTypeSelector" class="uk-select">
+                            <option value="smg">Submachine Guns</option>
+                            <option value="ar">Assault Rifles</option>
+                            <option value="dmr">Designated Marksman Rifles</option>
+                            <option value="sr">Sniperrifles</option>
+                            <option value="shotgun">Shotguns</option>
+                            <!--<option value="">Light Machine Guns</option>-->
+                        </select>
+                        <span uk-tooltip="A bonus rule to obey that affects your gameplay."><input id="cbRollBonusRule" class="uk-checkbox" type="checkbox">  Roll bonus rule</span><br />
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="uk-flex uk-flex-center" style="margin-top: 10px; height: 250px; display: none;" id="weaponCardContainer">
+            <div class="uk-card uk-card-default uk-card-body" style="width: 300px; text-align: center; padding-top: 5px;" id="weaponCard1">
+                <h3 class="uk-card-title" style="margin-bottom: 10px">Primary Weapon</h3>
+                <div id="weaponSlot1" style="margin-bottom: 10px;"></div>
+                <h5 class="uk-text-lead" id="weaponNameTag1"></h5>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-left" style="width: 300px; text-align: center; padding-top: 5px;" id="weaponCard2">
+                <h3 class="uk-card-title" style="margin-bottom: 10px">Secondary Weapon</h3>
+                <div id="weaponSlot2" style="margin-bottom: 10px;"></div>
+                <h5 class="uk-text-lead" id="weaponNameTag2"></h5>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-left" style="width: 300px; text-align: center; padding-top: 5px;" id="weaponCard3">
+                <h3 class="uk-card-title" style="margin-bottom: 10px">Sidearm</h3>
+                <div id="weaponSlot3" style="margin-bottom: 10px;"></div>
+                <h5 class="uk-text-lead" id="weaponNameTag3"></h5>
+            </div>
+        </div>
+        <div class="uk-text uk-overlay-primary" style="width: 100%; position: fixed; bottom: 0px; padding-bottom: 5px; padding-top: 5px; text-align: center;">
+            <span class="uk-icon uk-margin-small-right uk-margin-small-left" uk-icon="icon: minus"></span>
+            <a class="uk-link-muted" href="index.html">Home</a>
+            <span class="uk-icon uk-margin-small-right uk-margin-small-left" uk-icon="icon: minus"></span>
+            <a class="uk-link-muted" href="about.html">About</a>
+            <span class="uk-icon uk-margin-small-right uk-margin-small-left" uk-icon="icon: minus"></span>
+        </div>
+        <script type="text/javascript" src="js/script.js"></script>
+    </body>
+</html>
